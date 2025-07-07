@@ -1,0 +1,4 @@
+#Ignora las dependencias de node
+node_modules/
+#Ignora informacion sensible (tokens,claves,etc)
+.env
