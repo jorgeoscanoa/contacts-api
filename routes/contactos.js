@@ -46,4 +46,43 @@ enrutador.post('/', async (req,res)=> {
     }
 });
 
+// PUT  /api/contactos/:id
+// Actualiza uno o varios campos de un  contacto existenten
+
+enrutador.put('/:id', async (req,res)=>{
+    try{
+        const contactoActualizado = await Contacto.findByIdAndUpdate(
+            req.params.id, // ID de la url
+            req.body,   // nuevos datos
+            {
+                new: true,  // devolver el docucmento modificado
+                runValidators:true // aplicar validaciones del esquema
+            }   
+        );
+        if (!contactoActualizado){
+            return res.status(404).json({ error: 'Contacto no encontrado'});
+        }
+        res.json(contactoActualizado);
+    }catch (error){
+        res.status(400).json({ error: error.message});
+    }
+});
+
+// DELETE /api/contactos/:id
+// Elimina un contacto por su ID
+
+enrutador.delete('/:id', async (req, res)=>{
+    try{
+        const eliminado = await Contacto.findByIdAndDelete(req.params.id);
+        if (!eliminado){
+            return res.status(404).json({ error: ' Contacto no encontrado'});
+        }
+        res.json({mensaje: 'Comtacto eliminado correctamente'});
+    } catch (error) {
+        res.status(400).json({ error: 'Id invalido'});
+    }
+});
+
+
+
 module.exports = enrutador;
