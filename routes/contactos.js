@@ -1,6 +1,10 @@
 const express = require('express');
 const Contacto = require('../models/Contacto');
+const { authenticate, authorize } = require('../middleware/auth')
 const enrutador = express.Router();
+
+
+
 
 // GET/api/contactos 
 // **Devuelve todos los contactos**
@@ -37,7 +41,7 @@ enrutador.get('/:id', async (req, res)=> {
 // POST /api/contactos
 // Crea un nuevo contacto con los datos del body
 
-enrutador.post('/', async (req,res)=> {
+enrutador.post('/', authenticate, authorize(['admin']), async (req,res)=> {
     try{
         const nuevoContacto = await Contacto.create(req.body);
         res.status(201).json(nuevoContacto);
@@ -49,7 +53,7 @@ enrutador.post('/', async (req,res)=> {
 // PUT  /api/contactos/:id
 // Actualiza uno o varios campos de un  contacto existenten
 
-enrutador.put('/:id', async (req,res)=>{
+enrutador.put('/:id', authenticate, authorize(['admin']), async (req,res)=>{
     try{
         const contactoActualizado = await Contacto.findByIdAndUpdate(
             req.params.id, // ID de la url
@@ -71,7 +75,7 @@ enrutador.put('/:id', async (req,res)=>{
 // DELETE /api/contactos/:id
 // Elimina un contacto por su ID
 
-enrutador.delete('/:id', async (req, res)=>{
+enrutador.delete('/:id', authenticate, authorize(['admin']), async (req, res)=>{
     try{
         const eliminado = await Contacto.findByIdAndDelete(req.params.id);
         if (!eliminado){
@@ -82,7 +86,6 @@ enrutador.delete('/:id', async (req, res)=>{
         res.status(400).json({ error: 'Id invalido'});
     }
 });
-
 
 
 module.exports = enrutador;
